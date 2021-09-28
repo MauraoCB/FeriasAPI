@@ -40,20 +40,15 @@ namespace FeriasAPI.Repository
             }
         }
 
-        internal static List<ListItem> GetGestores()
+        internal static List<FuncionarioModel> GetGestores()
         {
             using (var oracle = new ECRUD.Oracle())
             {
-                string sqlStatment = "SELECT DISTINCT FUNC_REGISTRO, FUNC_NOME  FROM TELEMAT.V_FUNCIONARIOS_ALL WHERE FUNC_REGISTRO IN (SELECT FUNC_GESTOR FROM TELEMAT.V_FUNCIONARIOS_ALL) ORDER BY FUNC_NOME";
+                string sqlStatment = "SELECT DISTINCT FUNC_REGISTRO, FUNC_NOME  FROM TELEMAT.V_FUNCIONARIOS_ALL WHERE FUNC_ATIVO = 1 AND FUNC_REGISTRO IN (SELECT FUNC_GESTOR FROM TELEMAT.V_FUNCIONARIOS_ALL) ORDER BY FUNC_NOME";
                 DataTable tableGestores = oracle.GetDataTableWithException(sqlStatment, Enums.Bancos.Telemat, out strException);
 
-
                 var gestores = ConvertDataTable<FuncionarioModel>(tableGestores);
-
-                List<ListItem> listRetorno = gestores.Select(l => new ListItem { Value = l.FUNC_REGISTRO.ToString(), Text = l.FUNC_NOME }).ToList();
-                listRetorno.Insert(0, new ListItem { Value = "0", Text = "(Selecione)" });
-
-                return listRetorno;
+                return gestores;
             }
         }
         internal static List<FuncionarioModel> GetFuncionariosByGestor(int gestor)

@@ -70,7 +70,7 @@ namespace FeriasAPI.Controllers
 
         [HttpGet]
         [Route("GetGestores")]
-        public List<ListItem> GetGestores()
+        public List<FuncionarioModel> GetGestores()
         {
             return FuncionarioRepository.GetGestores();
         }
