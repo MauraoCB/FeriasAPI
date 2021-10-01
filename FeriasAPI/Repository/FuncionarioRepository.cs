@@ -182,18 +182,18 @@ namespace FeriasAPI.Repository
             {                
                 QueryData queryData = new QueryData();
 
-                string whereClause = "" ;
+                string whereClause = " FUNC_ATIVO = 1 " ;
 
                 if (Params != null)
                 {
-                    whereClause = $"{Params[0, 0]} = '{Params[0, 1]}'";
+                    whereClause += $"AND {Params[0, 0]} = '{Params[0, 1]}'";
                     if (useLike)
                     {
-                        whereClause = $"{Params[0, 0]} LIKE '%{Params[0, 1]}%'";
+                        whereClause += $"AND {Params[0, 0]} LIKE '%{Params[0, 1]}%'";
                     } 
                 }
 
-                queryData = ReturnSqlQuery("Telemat.V_FUNCIONARIOS_ALL", Enums.OperationDML.SELECT, whereClause, "", "", new FuncionarioModel());
+                queryData = ReturnSqlQuery("Telemat.V_FUNCIONARIOS_ALL", Enums.OperationDML.SELECT, whereClause, "", "", new FuncionarioModel(), "FUNC_NOME");
                                 
                 var funcionariosRetorno = ConvertDataReader<FuncionarioModel>(Oracle.GetDataReaderWithException(queryData.SqlStatment, Enums.Bancos.Telemat, out strException));         
 

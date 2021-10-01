@@ -48,6 +48,7 @@ namespace FeriasAPI.Repository
                     }
                     else
                     {
+                        item.PGFR_STATUS = "Aprovação Pendente";
                         queryData = ReturnSqlQuery("ESCALA.PROGRAMACAO_FERIAS", Enums.OperationDML.INSERT, "", "PGFR_ID", "", item);
                     }
 
@@ -90,7 +91,7 @@ namespace FeriasAPI.Repository
             QueryData queryData = new QueryData();
             foreach (var item in progamacoesAprovar)
             {
-                queryData.SqlStatment = $"UPDATE Escala.PROGRAMACAO_FERIAS SET PGFR_AUTORIZADO = {item.Autorizado} WHERE PGFR_ID = {item.PGFR_ID}";
+                queryData.SqlStatment = $"UPDATE Escala.PROGRAMACAO_FERIAS SET PGFR_AUTORIZADO = {item.Autorizado}, PGFR_STATUS = '{item.Status}', PGFR_MOTIVO_STATUS = '{item.MotivoStatus}' WHERE PGFR_ID = {item.PGFR_ID}";
                 ExecuteInsertUpdate(Enums.Bancos.Escala, queryData);
             }
         }

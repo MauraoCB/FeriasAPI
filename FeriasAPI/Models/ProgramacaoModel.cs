@@ -38,10 +38,10 @@ namespace FeriasAPI.Models
         public DateTime PGFR_DT_LEITURA { get; set; }
         public int USUA_ID { get; set; }
         public bool PGFR_ATIVO { get; set; }
-
         public DateTime PGFR_ULT_LEITURA { get; set; }
         public DateTime PGFR_DT_LANC_PERIODO { get; set; }
         public bool PGFR_AUTORIZADO { get; set; }
-
+        public string PGFR_STATUS { get; set; }
+        public string PGFR_MOTIVO_STATUS { get; set; }
     }
 }

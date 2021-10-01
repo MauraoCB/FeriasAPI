@@ -22,7 +22,7 @@ namespace FeriasAPI.Repository
         /// <param name="operationDML">Valores válidos I, U, S, D</param>
         /// <param name="objectModel">Objeto de classe cujas propriedades tenham o mesmo nome e tipo das respectivas colunas da tabela recebida no parâmetro tableName </param>
         /// <returns>Instrução SQL pronta para ser executada pela classe que este método</returns>
-        public static QueryData ReturnSqlQuery(string tableName, OperationDML operationDML, string whereClause, string excludColumns, string identityColumn, object objectModel)
+        public static QueryData ReturnSqlQuery(string tableName, OperationDML operationDML, string whereClause, string excludColumns, string identityColumn, object objectModel, string orderBy = "")
         {
             try
             {
@@ -156,6 +156,11 @@ namespace FeriasAPI.Repository
                         if (whereClause != "")
                         {
                             sqlStatement.Append($" WHERE {whereClause}");
+                        }
+
+                        if (orderBy !="")
+                        {
+                            sqlStatement.Append($" ORDER BY {orderBy}");
                         }
                         break;
                     default:
