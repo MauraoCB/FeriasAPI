@@ -73,10 +73,10 @@ namespace FeriasAPI.Repository
             List<EquipeFuncionarioModel> equipeFuncionarios = new List<EquipeFuncionarioModel>  ();
             StringBuilder sbQuery = new StringBuilder();
 
-            sbQuery.Append(" SELECT DISTINCT S.Registro, F.FUNC_ID, E.EQUI_DESCRICAO AS Descricao, E.OPER_ADM AS OperAdm");
-            sbQuery.Append(" FROM ESCALA.SUB_EQUIPES@CTIS_PROD S, TELEMAT.V_FUNCIONARIOS_ALL F, ESCALA.MV_EQUIPES_ALL E");
-            sbQuery.Append(" WHERE S.FUNC_ID = F.FUNC_ID AND S.Registro = E.Registro");
-            sbQuery.Append(" UNION ALL");
+            sbQuery.Append(" SELECT DISTINCT Registro,  Registro FUNC_ID, EQUI_DESCRICAO AS Descricao, OPER_ADM AS OperAdm");
+            sbQuery.Append(" FROM ESCALA.MV_EQUIPES_ALL");
+            sbQuery.Append(" WHERE EQUI_DESCRICAO NOT LIKE '%DEMITIDOS%' AND EQUI_DESCRICAO NOT LIKE '%AFASTADOS%'");
+          /*  sbQuery.Append(" UNION ALL");
             sbQuery.Append(" SELECT DISTINCT S.Registro, F.FUNC_ID, E.EQUI_DESCRICAO AS Descricao, E.OPER_ADM AS OperAdm");
             sbQuery.Append(" FROM ESCALA.SUB_EQUIPES@CONVICON_prod S, TELEMAT.V_FUNCIONARIOS_ALL F, ESCALA.MV_EQUIPES_ALL E");
             sbQuery.Append(" WHERE S.FUNC_ID = F.FUNC_ID AND S.Registro = E.Registro");
@@ -87,7 +87,7 @@ namespace FeriasAPI.Repository
             sbQuery.Append(" UNION ALL");
             sbQuery.Append(" SELECT DISTINCT S.Registro, F.FUNC_ID, E.EQUI_DESCRICAO AS Descricao, E.OPER_ADM AS OperAdm");
             sbQuery.Append(" FROM ESCALA.SUB_EQUIPES@IMBITUBA_PROD.SANTOSBRASIL.COM.BR S, TELEMAT.V_FUNCIONARIOS_ALL F, ESCALA.MV_EQUIPES_ALL E");
-            sbQuery.Append(" WHERE S.FUNC_ID = F.FUNC_ID AND S.Registro = E.Registro");
+            sbQuery.Append(" WHERE S.FUNC_ID = F.FUNC_ID AND S.Registro = E.Registro");*/
 
 
             var dtRetorno = GetDataTable(sbQuery.ToString(), Enums.Bancos.Escala);
@@ -124,7 +124,7 @@ namespace FeriasAPI.Repository
             {
                 using (var Oracle = new ECRUD.Oracle())
                 {
-                    string sql = "SELECT DISTINCT EQUI_DESCRICAO FROM Escala.MV_EQUIPES_ALL ORDER BY EQUI_DESCRICAO";
+                    string sql = "SELECT DISTINCT EQUI_DESCRICAO FROM Escala.MV_EQUIPES_ALL WHERE EQUI_DESCRICAO NOT LIKE '%DEMITIDOS%' AND EQUI_DESCRICAO NOT LIKE '%AFASTADOS%' ORDER BY EQUI_DESCRICAO";
                 
 
                     DataTable tableEquipes = Oracle.GetDataTableWithException(sql, Enums.Bancos.Escala, out strException);

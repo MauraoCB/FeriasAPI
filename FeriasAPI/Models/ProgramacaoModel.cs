@@ -43,5 +43,6 @@ namespace FeriasAPI.Models
         public bool PGFR_AUTORIZADO { get; set; }
         public string PGFR_STATUS { get; set; }
         public string PGFR_MOTIVO_STATUS { get; set; }
+        public string PGFR_CAMPOS_ALTERADOS { get; set; }
     }
 }
