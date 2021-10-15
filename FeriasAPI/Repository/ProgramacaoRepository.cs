@@ -23,7 +23,7 @@ namespace FeriasAPI.Repository
 
                     StringBuilder sbQuery = new StringBuilder();
 
-                    sbQuery.Append(" SELECT PGFR_ID ");
+                    sbQuery.Append(" SELECT PGFR_ID, TPPG_ID, PGFR_13, PGFR_PROGRAMACAO_1, PGFR_PROGRAMACAO_2 ");
                     sbQuery.Append("   FROM Escala.PROGRAMACAO_FERIAS ");
                     sbQuery.Append("  WHERE PGFR_MATRICULA = :PGFR_MATRICULA ");
                     sbQuery.Append("    AND PGFR_PERIODO_AQUISITIVO = :PGFR_PERIODO_AQUISITIVO ");
@@ -37,18 +37,40 @@ namespace FeriasAPI.Repository
                     item.PGFR_ULT_LEITURA = DateTime.Now;
                     item.PGFR_DT_LEITURA = DateTime.Now;
 
-                    item.TPPG_ID = null;
-
                     DataTable dt = GetDataTable(sbQuery.ToString(), Enums.Bancos.Escala, Params);
                     QueryData queryData = new QueryData();
                     if (dt.Rows.Count != 0)
                     {
                         item.PGFR_ID = Convert.ToInt16(dt.Rows[0]["PGFR_ID"]);
-                        queryData = ReturnSqlQuery("ESCALA.PROGRAMACAO_FERIAS", Enums.OperationDML.UPDATE, $"PGFR_MATRICULA = {item.PGFR_MATRICULA} AND PGFR_PERIODO_AQUISITIVO = '{item.PGFR_PERIODO_AQUISITIVO}'", "PGFR_ID,PGFR_PROGRAMACAO_1,PGFR_PROGRAMACAO_2,PGFR_DIAS_1,PGFR_DIAS_2,PGFR_ABONO,PGFR_13,PGFR_DT_LEITURA", "", item);
+                        if (dt.Rows[0]["TPPG_ID"].GetType().Name != "DBNull")
+                        {
+                            item.TPPG_ID = Convert.ToInt32(dt.Rows[0]["TPPG_ID"]);
+                        }
+
+                          if (dt.Rows[0]["PGFR_13"].ToString() != "0")
+                          {
+                              item.PGFR_13 = Convert.ToInt32(dt.Rows[0]["PGFR_13"]);
+                          }
+                                           
+                        if  (Convert.ToDateTime( dt.Rows[0]["PGFR_PROGRAMACAO_1"]) != DateTime.MinValue)
+                        {
+                            item.PGFR_PROGRAMACAO_1 = Convert.ToDateTime(dt.Rows[0]["PGFR_PROGRAMACAO_1"]);
+                        }
+
+                        if (Convert.ToDateTime(dt.Rows[0]["PGFR_PROGRAMACAO_2"]) != DateTime.MinValue)
+                        {
+                            item.PGFR_PROGRAMACAO_2 = Convert.ToDateTime(dt.Rows[0]["PGFR_PROGRAMACAO_2"]);
+                        }
+                        //
+                        queryData = ReturnSqlQuery("ESCALA.PROGRAMACAO_FERIAS", Enums.OperationDML.UPDATE, $"PGFR_MATRICULA = {item.PGFR_MATRICULA} AND PGFR_PERIODO_AQUISITIVO = '{item.PGFR_PERIODO_AQUISITIVO}'", "PGFR_ID,PGFR_DIAS_1,PGFR_DIAS_2,PGFR_ABONO,PGFR_DT_LEITURA", "", item);
                     }
                     else
                     {
-                        item.PGFR_STATUS = "Aprovação Pendente";
+                        //30 DIAS CONSECUTIVOS ou 20 DIAS COM 10 DE ABONO
+                        if (item.TPPG_ID <= 2 && item.PGFR_13 > 0)
+                        {
+                            item.PGFR_13 = 1;
+                        }
                         queryData = ReturnSqlQuery("ESCALA.PROGRAMACAO_FERIAS", Enums.OperationDML.INSERT, "", "PGFR_ID", "", item);
                     }
 
@@ -75,6 +97,7 @@ namespace FeriasAPI.Repository
 
                         queryData = ReturnSqlQuery("ESCALA.DISTRIBUICAO_FERIAS_OPER", Enums.OperationDML.INSERT, "", "DFOP_ID", "DFOP_ID", distribuicaoFerias);
                     }
+
                     ExecuteInsertUpdate(Enums.Bancos.Escala, queryData);
                 }
                  

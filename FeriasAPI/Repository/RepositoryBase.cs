@@ -227,34 +227,38 @@ namespace FeriasAPI.Repository
         public static void ExecuteInsertUpdate(Enums.Bancos banco, QueryData queryData)
         {
             using (OracleConnection connection = new OracleConnection(GetConnectionString(banco)))
-            {
+            {      
                 connection.Open();
 
-                OracleCommand cmd = new OracleCommand(queryData.SqlStatment, connection);              
-
-                if (queryData.Parameters != null)
+                using (OracleCommand cmd = new OracleCommand(queryData.SqlStatment, connection))
                 {
-                    for (int i = 0; i < queryData.Parameters.Length / 2; i++)
+                    if (queryData.Parameters != null)
                     {
-                        if (queryData.Parameters[i, 0] != null)
+                        for (int i = 0; i < queryData.Parameters.Length / 2; i++)
                         {
-                            cmd.Parameters.Add(new OracleParameter(queryData.Parameters[i, 0].ToString(), queryData.Parameters[i, 1]));
+                            if (queryData.Parameters[i, 0] != null)
+                            {
+                                cmd.Parameters.Add(new OracleParameter(queryData.Parameters[i, 0].ToString(), queryData.Parameters[i, 1]));
+                            }
                         }
-                    } 
-                }
-                try
-                {
-                    cmd.Transaction = connection.BeginTransaction();
-                    cmd.ExecuteNonQuery();
-                    cmd.Transaction.Commit();
-                }
-                catch (Exception ex)
-                {
+                    }
+                    try
+                    {
+                        cmd.CommandTimeout = 900;
+                        cmd.Transaction = connection.BeginTransaction();
+                        cmd.ExecuteNonQuery();
+                        cmd.Transaction.Commit();
+                        cmd.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
 
-                    cmd.Transaction.Rollback();
+                        cmd.Transaction.Rollback();
+                    }
                 }
                 connection.Close();
                 connection.Dispose();
+                
                 GC.SuppressFinalize(connection);
             }
         }

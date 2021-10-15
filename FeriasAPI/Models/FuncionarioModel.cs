@@ -75,6 +75,6 @@ namespace FeriasAPI.Models
         public int FUNC_GESTOR { get; set; }
         public string FUNC_GESTOR_NOME { get; set; }
         public string FUNC_AREA { get; set; }
-
+        public string FUNC_TP_MDO { get; set; }
     }
 }

@@ -17,8 +17,12 @@ namespace FeriasAPI.Repository
             List<FeriasDelegaModel> ferias = new List<FeriasDelegaModel>();
             QueryData queryData = new QueryData();
 
-            string whereClause = $"FUNC_GESTOR = {gestor}";
+            string whereClause = "";
 
+            if (gestor !=0)
+            {
+                whereClause = $"FUNC_GESTOR = {gestor}";
+            }
 
             queryData = ReturnSqlQuery("Escala.Ferias_Delega", Enums.OperationDML.SELECT, whereClause, "", "", new FeriasDelegaModel());
             DataTable returnTable = GetDataTable(queryData.SqlStatment, Enums.Bancos.Escala);
