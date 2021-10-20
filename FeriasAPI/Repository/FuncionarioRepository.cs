@@ -44,7 +44,7 @@ namespace FeriasAPI.Repository
         {
             using (var oracle = new ECRUD.Oracle())
             {
-                string sqlStatment = "SELECT DISTINCT FUNC_REGISTRO, FUNC_NOME  FROM TELEMAT.V_FUNCIONARIOS_ALL WHERE FUNC_ATIVO = 1 AND FUNC_REGISTRO IN (SELECT FUNC_GESTOR FROM TELEMAT.V_FUNCIONARIOS_ALL) ORDER BY FUNC_NOME";
+                string sqlStatment = "SELECT DISTINCT FUNC_REGISTRO, FUNC_NOME  FROM TELEMAT.V_FUNCIONARIOS_ALL WHERE FUNC_ATIVO = 1 AND FUNC_REGISTRO IN (SELECT FUNC_GESTOR FROM TELEMAT.V_FUNCIONARIOS_ALL WHERE FUNC_ATIVO = 1) ORDER BY FUNC_NOME";
                 DataTable tableGestores = oracle.GetDataTableWithException(sqlStatment, Enums.Bancos.Telemat, out strException);
 
                 var gestores = ConvertDataTable<FuncionarioModel>(tableGestores);
