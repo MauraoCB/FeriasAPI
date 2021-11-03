@@ -42,14 +42,11 @@ namespace FeriasAPI.Repository
 
         internal static List<FuncionarioModel> GetGestores()
         {
-            using (var oracle = new ECRUD.Oracle())
-            {
-                string sqlStatment = "SELECT DISTINCT FUNC_REGISTRO, FUNC_NOME  FROM TELEMAT.V_FUNCIONARIOS_ALL WHERE FUNC_ATIVO = 1 AND FUNC_REGISTRO IN (SELECT FUNC_GESTOR FROM TELEMAT.V_FUNCIONARIOS_ALL WHERE FUNC_ATIVO = 1) ORDER BY FUNC_NOME";
-                DataTable tableGestores = oracle.GetDataTableWithException(sqlStatment, Enums.Bancos.Telemat, out strException);
+            string sqlStatment = "SELECT DISTINCT FUNC_REGISTRO, FUNC_NOME  FROM TELEMAT.V_FUNCIONARIOS_ALL WHERE FUNC_ATIVO = 1 AND FUNC_REGISTRO IN (SELECT FUNC_GESTOR FROM TELEMAT.V_FUNCIONARIOS_ALL WHERE FUNC_ATIVO = 1) ORDER BY FUNC_NOME";
+            DataTable tableGestores = GetDataTable(sqlStatment, Enums.Bancos.Telemat);
 
-                var gestores = ConvertDataTable<FuncionarioModel>(tableGestores);
-                return gestores;
-            }
+            var gestores = ConvertDataTable<FuncionarioModel>(tableGestores);
+            return gestores;
         }
         internal static List<FuncionarioModel> GetFuncionariosByGestor(int gestor)
         {
@@ -178,8 +175,7 @@ namespace FeriasAPI.Repository
 
         private static List<FuncionarioModel> GetFuncionarios(object[,] Params, bool useLike = false)
         {
-            using (var Oracle = new ECRUD.Oracle())
-            {                
+                      
                 QueryData queryData = new QueryData();
 
                 string whereClause = " FUNC_ATIVO = 1 " ;
@@ -193,12 +189,12 @@ namespace FeriasAPI.Repository
                     } 
                 }
 
-                queryData = ReturnSqlQuery("Telemat.V_FUNCIONARIOS_ALL", Enums.OperationDML.SELECT, whereClause, "", "", new FuncionarioModel(), "FUNC_NOME");
-                                
-                var funcionariosRetorno = ConvertDataReader<FuncionarioModel>(Oracle.GetDataReaderWithException(queryData.SqlStatment, Enums.Bancos.Telemat, out strException));         
+                queryData = ReturnSqlQuery("Telemat.V_FUNCIONARIOS_ALL", Enums.OperationDML.SELECT, whereClause, "", "", new FuncionarioModel(), "FUNC_NOME");             
+
+                var funcionariosRetorno = GetObjectList<FuncionarioModel>(queryData.SqlStatment, Enums.Bancos.Telemat);
 
                 return funcionariosRetorno;
-            }
+            
         }
     }
 }

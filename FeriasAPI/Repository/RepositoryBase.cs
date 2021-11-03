@@ -335,6 +335,45 @@ namespace FeriasAPI.Repository
             }
         }
 
+        public static List<T> GetObjectList<T>(string sqlStatment, Enums.Bancos banco)
+        {
+            List<T> returnList = new List<T>();
+
+            Type temp = typeof(T);
+
+            using (OracleConnection connection = new OracleConnection(GetConnectionString(banco)))
+            {                
+                connection.Open();
+
+                OracleCommand cmd = new OracleCommand(sqlStatment, connection);
+
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    T obj = Activator.CreateInstance<T>();
+
+                    foreach (var prop in temp.GetProperties())
+                    {
+                        if (reader[prop.Name].GetType().Name != "DBNull")
+                        {
+                            if (prop.PropertyType.FullName.ToLower().Contains("nullable"))
+                            {
+                                prop.SetValue(obj, reader[prop.Name]);
+                            }
+                            else
+                            {
+                                prop.SetValue(obj, Convert.ChangeType(reader[prop.Name], prop.PropertyType), null);
+                            }
+                        }
+                    }
+
+                    returnList.Add(obj);
+                }
+
+                return returnList;
+            }
+        }
         #region Private methods
         private static T GetItem<T>(DataRow dr)
         {
